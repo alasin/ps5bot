@@ -24,10 +24,13 @@ NOTE: Make sure no items are in your cart for any of the above accounts on that 
 
 ## PS5Bot Setup
  1. Run ps5bot. You'll be prompted to fill in required checkout info  
-    `npx ps5bot`
+    `node bin/ps5bot`. You can set it to start the scraping now when it asks for it and then exit it.
  2. Run scraper
-    `npx ps5bot scrape`
+    `node bin/ps5bot scrape`
     - you will be asked to select the sites to run the bot. If you don't select anything, it will try to run on all websites.
+ 3. **FOR WALMART** :
+    Once you run scraper for Walmart, you have 20s 
+    (you can change that in `utils/scrape-walmart-util.ts`) to login to your account with your username and password, after which it will go into auto-refresh mode.  
 
 ## Bot Configs
 Configs are read in `config.json` file. You can either run `ps5bot` to generate a config file, or copy `configTemplate.json` and rename it to `config.json` and fill out the fields.
