@@ -12,12 +12,13 @@ const puppeteer = require('puppeteer-extra')
 export const scrapeWalmart = async (config: { [key: string]: string }) => {
   const {
     cvv,
-    walmartEmail,
-    walmartPassword
+    // walmartEmail,
+    // walmartPassword
   } = config
 
   const browser = await puppeteer.launch({
     headless: false,
+    executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
     args: ['--window-size=1920,1080'],
     defaultViewport: null
   })
@@ -43,11 +44,12 @@ export const scrapeWalmart = async (config: { [key: string]: string }) => {
 
     // console url
     URL = 'https://www.walmart.com/ip/PlayStation-5-Console/363472942'
-    
+
     // digital url
     //URL = 
 
     await page.goto(URL, { waitUntil: 'load', timeout: 0 })
+    await page.waitForTimeout(20000)
 
     // keep refreshing until "Add to Cart" is available
     while (true) {
@@ -55,7 +57,7 @@ export const scrapeWalmart = async (config: { [key: string]: string }) => {
         await page.waitForSelector(
           'button[data-tl-id="ProductPrimaryCTA-cta_add_to_cart_button"]',
           {
-            timeout: 10000
+            timeout: 3000
           }
         )
         break
@@ -80,11 +82,11 @@ export const scrapeWalmart = async (config: { [key: string]: string }) => {
     // await continueWithoutAccountButton.click()
 
     // with account
-    await page.waitForSelector('#sign-in-email', { timeout: 0 })
-    await page.type('#sign-in-email', walmartEmail)
-    await page.type('[name="password"]', walmartPassword)
-    await page.keyboard.press('Enter')
-    
+    // await page.waitForSelector('#sign-in-email', { timeout: 0 })
+    // await page.type('#sign-in-email', walmartEmail)
+    // await page.type('[name="password"]', walmartPassword)
+    // await page.keyboard.press('Enter')
+
 
     // delivery page
     const continueButton = await page.waitForSelector('button.cxo-continue-btn', { timeout: 0 })
@@ -94,7 +96,7 @@ export const scrapeWalmart = async (config: { [key: string]: string }) => {
     const addressContinueButton = await page.waitForSelector('button[aria-label="Continue to Payment Options"]', { timeout: 0 })
     await addressContinueButton.click()
 
-    
+
     // check for delivery change based on address
     await page.waitForSelector('#fulfillment-options-changed', { timeout: 10000 }).then(async () => {
       // delivery page
@@ -106,14 +108,14 @@ export const scrapeWalmart = async (config: { [key: string]: string }) => {
       await addressContinueButton.click()
     }).catch(() => {
       console.log('No fulfillment errors.')
-    }) 
+    })
 
     // Review Order
     const reviewOrderButton = await page.waitForSelector('button.fulfillment-opts-continue', { timeout: 0 })
     await page.type('input[name="cvv"]', cvv)
     await reviewOrderButton.click()
 
-    
+
     // place order
     const placeOrderButton = await page.waitForSelector('button.auto-submit-place-order', { timeout: 0 })
     await placeOrderButton.click()
